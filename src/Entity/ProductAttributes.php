@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductAttributeRepository;
+use App\Repository\ProductAttributesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ProductAttributeRepository::class)
+ * @ORM\Entity(repositoryClass=ProductAttributesRepository::class)
  */
 class ProductAttributes
 {
@@ -25,13 +25,13 @@ class ProductAttributes
     private $name = [];
 
     /**
-     * @ORM\OneToMany(targetEntity=ProductAttributeValue::class, mappedBy="product_attribute_id", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=ProductAttributeValues::class, mappedBy="product_attribute", orphanRemoval=true)
      */
-    private $product_attribute_id;
+    private $product_attributes;
 
     public function __construct()
     {
-        $this->product_attribute_id = new ArrayCollection();
+        $this->product_attributes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -56,25 +56,25 @@ class ProductAttributes
      */
     public function getProductAttributeId(): Collection
     {
-        return $this->product_attribute_id;
+        return $this->product_attributes;
     }
 
     public function addProductAttributeId(ProductAttributeValues $productAttributeId): self
     {
-        if (!$this->product_attribute_id->contains($productAttributeId)) {
-            $this->product_attribute_id[] = $productAttributeId;
+        if (!$this->product_attributes->contains($productAttributeId)) {
+            $this->product_attributes[] = $productAttributeId;
             $productAttributeId->setProductAttributeId($this);
         }
 
         return $this;
     }
 
-    public function removeProductAttributeId(ProductAttributeValues $productAttributeId): self
+    public function removeProductAttributesId(ProductAttributeValues $productAttributesId): self
     {
-        if ($this->product_attribute_id->removeElement($productAttributeId)) {
+        if ($this->product_attributes->removeElement($productAttributesId)) {
             // set the owning side to null (unless already changed)
-            if ($productAttributeId->getProductAttributeId() === $this) {
-                $productAttributeId->setProductAttributeId(null);
+            if ($productAttributesId->getProductAttributeId() === $this) {
+                $productAttributesId->setProductAttributeId(null);
             }
         }
 

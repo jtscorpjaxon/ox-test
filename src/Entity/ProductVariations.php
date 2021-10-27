@@ -18,10 +18,10 @@ class ProductVariations
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="product_id")
+     * @ORM\ManyToOne(targetEntity=Products::class, inversedBy="product")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $product_id;
+    private $product;
 
     /**
      * @ORM\Column(type="json", nullable=true)
@@ -45,12 +45,12 @@ class ProductVariations
 
     public function getProductId(): ?Products
     {
-        return $this->product_id;
+        return $this->product;
     }
 
-    public function setProductId(?Products $product_id): self
+    public function setProductId(?Products $product): self
     {
-        $this->product_id = $product_id;
+        $this->product = $product;
 
         return $this;
     }

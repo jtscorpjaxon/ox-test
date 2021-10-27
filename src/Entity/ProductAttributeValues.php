@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductAttributeValueRepository;
+use App\Repository\ProductAttributeValuesRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ProductAttributeValueRepository::class)
+ * @ORM\Entity(repositoryClass=ProductAttributeValuesRepository::class)
  */
 class ProductAttributeValues
 {
@@ -18,10 +18,10 @@ class ProductAttributeValues
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ProductAttribute::class, inversedBy="product_attribute_id")
+     * @ORM\ManyToOne(targetEntity=ProductAttributes::class, inversedBy="product_attribute")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $product_attribute_id;
+    private $product_attribute;
 
     /**
      * @ORM\Column(type="json")
@@ -35,12 +35,12 @@ class ProductAttributeValues
 
     public function getProductAttributeId(): ?ProductAttributes
     {
-        return $this->product_attribute_id;
+        return $this->product_attribute;
     }
 
-    public function setProductAttributeId(?ProductAttributes $product_attribute_id): self
+    public function setProductAttributeId(?ProductAttributes $product_attribute): self
     {
-        $this->product_attribute_id = $product_attribute_id;
+        $this->product_attribute = $product_attribute;
 
         return $this;
     }

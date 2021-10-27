@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductRepository;
+use App\Repository\ProductsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ProductRepository::class)
+ * @ORM\Entity(repositoryClass=ProductsRepository::class)
  */
 class Products
 {
@@ -65,13 +65,13 @@ class Products
     private $active;
 
     /**
-     * @ORM\OneToMany(targetEntity=ProductVariations::class, mappedBy="product_id")
+     * @ORM\OneToMany(targetEntity=ProductVariations::class, mappedBy="product")
      */
-    private $product_id;
+    private $product;
 
     public function __construct()
     {
-        $this->product_id = new ArrayCollection();
+        $this->product = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -192,13 +192,13 @@ class Products
      */
     public function getProductId(): Collection
     {
-        return $this->product_id;
+        return $this->product;
     }
 
     public function addProductId(ProductVariations $productId): self
     {
-        if (!$this->product_id->contains($productId)) {
-            $this->product_id[] = $productId;
+        if (!$this->product->contains($productId)) {
+            $this->product[] = $productId;
             $productId->setProductId($this);
         }
 
@@ -207,7 +207,7 @@ class Products
 
     public function removeProductId(ProductVariations $productId): self
     {
-        if ($this->product_id->removeElement($productId)) {
+        if ($this->product->removeElement($productId)) {
             // set the owning side to null (unless already changed)
             if ($productId->getProductId() === $this) {
                 $productId->setProductId(null);
