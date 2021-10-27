@@ -7,13 +7,14 @@
  */
 
 namespace App\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Table(name="users")
  * @ORM\Entity
  */
-class User implements UserInterface
+class Users implements UserInterface
 {
     /**
      * @ORM\Column(type="integer")
@@ -39,11 +40,14 @@ class User implements UserInterface
      * User constructor.
      * @param $username
      */
-    public function __construct($username)
+    public function __construct()
     {
-        $this->username = $username;
+        $this->username = new ArrayCollection();
     }
-
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
     /**
      * @return string
      */

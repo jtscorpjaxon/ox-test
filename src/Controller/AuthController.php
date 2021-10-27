@@ -7,7 +7,7 @@
  */
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Entity\Users;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +29,7 @@ class AuthController extends ApiController
         }
 
 
-        $user = new User($username);
+        $user = new Users($username);
         $user->setPassword($encoder->encodePassword($user, $password));
         $user->setEmail($email);
         $user->setUsername($username);
