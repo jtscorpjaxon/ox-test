@@ -1,4 +1,7 @@
 security:
+    encoders:
+        App\Entity\User:
+            algorithm: bcrypt
     enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
@@ -11,7 +14,6 @@ security:
                 class: App\Entity\User
                 property: username
     firewalls:
-
         login:
             pattern: ^/api/login
             stateless: true
@@ -21,12 +23,12 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-
         api:
             pattern:   ^/api
             stateless: true
             provider: app_user_provider
             jwt: ~
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
