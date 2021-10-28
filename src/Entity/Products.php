@@ -20,14 +20,14 @@ class Products
     private $id;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="string",length=255)
      */
-    private $name = [];
+    private $name ;
 
     /**
-     * @ORM\Column(type="json", nullable=true)
+     * @ORM\Column(type="string",length=255, nullable=true)
      */
-    private $description = [];
+    private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -65,7 +65,7 @@ class Products
     private $active;
 
     /**
-     * @ORM\OneToMany(targetEntity=ProductVariations::class, mappedBy="product")
+     * @ORM\OneToMany(targetEntity=ProductVariations::class, mappedBy="product", cascade={"persist"})
      */
     private $product;
 
@@ -84,7 +84,7 @@ class Products
         return $this->name;
     }
 
-    public function setName(array $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -96,7 +96,7 @@ class Products
         return $this->description;
     }
 
-    public function setDescription(?array $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 

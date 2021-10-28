@@ -18,15 +18,15 @@ class ProductAttributeValues
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ProductAttributes::class, inversedBy="product_attribute")
+     * @ORM\ManyToOne(targetEntity=ProductAttributes::class, inversedBy="product_attribute",cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $product_attribute;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="string",length=255)
      */
-    private $name = [];
+    private $name;
 
     public function getId(): ?int
     {
@@ -45,16 +45,19 @@ class ProductAttributeValues
         return $this;
     }
 
-    public function getName(): ?array
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(array $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
-
+    public function __toString()
+    {
+        return $this->name;
+    }
 }

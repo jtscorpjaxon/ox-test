@@ -3,15 +3,20 @@
 namespace App\Entity;
 
 use App\Repository\ProductAttributesRepository;
+use App\Traits\HasTranslatableJson;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Entity;
+use Exception;
 
 /**
  * @ORM\Entity(repositoryClass=ProductAttributesRepository::class)
  */
 class ProductAttributes
 {
+    use HasTranslatableJson;
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -20,17 +25,21 @@ class ProductAttributes
     private $id;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="string",length=255,)
      */
-    private $name = [];
+    private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=ProductAttributeValues::class, mappedBy="product_attribute", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=ProductAttributeValues::class, mappedBy="product_attribute", orphanRemoval=true, cascade={"persist"})
      */
     private $product_attributes;
+    /**
+     * @var EntityManagerInterface
+     */
 
     public function __construct()
     {
+
         $this->product_attributes = new ArrayCollection();
     }
 
@@ -39,12 +48,12 @@ class ProductAttributes
         return $this->id;
     }
 
-    public function getName(): ?array
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(array $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -61,6 +70,8 @@ class ProductAttributes
 
     public function addProductAttributeId(ProductAttributeValues $productAttributeId): self
     {
+
+
         if (!$this->product_attributes->contains($productAttributeId)) {
             $this->product_attributes[] = $productAttributeId;
             $productAttributeId->setProductAttributeId($this);
@@ -69,7 +80,7 @@ class ProductAttributes
         return $this;
     }
 
-    public function removeProductAttributesId(ProductAttributeValues $productAttributesId): self
+    public function removeProductAttributeId(ProductAttributeValues $productAttributesId): self
     {
         if ($this->product_attributes->removeElement($productAttributesId)) {
             // set the owning side to null (unless already changed)
@@ -79,5 +90,10 @@ class ProductAttributes
         }
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 }

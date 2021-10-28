@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\ProductAttributeValues;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class ProductAttributeValueCrudController extends AbstractCrudController
 {
@@ -12,14 +13,12 @@ class ProductAttributeValueCrudController extends AbstractCrudController
         return ProductAttributeValues::class;
     }
 
-    /*
+
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
+            TextField::new('name'),
         ];
     }
-    */
+
 }

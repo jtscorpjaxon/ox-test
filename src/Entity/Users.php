@@ -1,117 +1,130 @@
 <?php
-/**
- * Author Maxamadjonov Jaxongir.
- * https://github.com/jtscorpjaxon
- * Date: 27.10.2021
- * Time: 14:41
- */
 
 namespace App\Entity;
-use Doctrine\Common\Collections\ArrayCollection;
+
+use App\Repository\UsersRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
+
 /**
- * @ORM\Table(name="users")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass=UsersRepository::class)
  */
-class Users implements UserInterface
+class Users
 {
     /**
-     * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
     private $id;
+
     /**
-     * @ORM\Column(type="string", length=25, unique=true)
+     * @ORM\Column(type="string", length=255,unique=true)
      */
-    private $username;
+    private $login;
+
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=45)
+     * @ORM\Column(type="string", length=255,unique=true)
      */
     private $email;
 
     /**
-     * User constructor.
-     * @param $username
+     * @ORM\Column(type="boolean")
      */
-    public function __construct()
-    {
-        $this->username = new ArrayCollection();
-    }
+    private $active;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $role ;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $created_at;
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    /**
-     * @return string
-     */
-    public function getUsername()
+
+    public function getLogin(): ?string
     {
-        return $this->username;
+        return $this->login;
     }
 
-    /**
-     * @param mixed $username
-     */
-    public function setUsername($username): void
+    public function setLogin(string $login): self
     {
-        $this->username = $username;
+        $this->login = $login;
+
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getSalt()
-    {
-        return null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    /**
-     * @param $password
-     */
-    public function setPassword($password)
+    public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
     }
-    /**
-     * @return mixed
-     */
-    public function getEmail()
+
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * @param mixed $email
-     */
-    public function setEmail($email): void
+    public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
     }
 
-    /**
-     * @return array|string[]
-     */
-    public function getRoles()
+    public function getActive(): ?bool
     {
-        return array('ROLE_USER');
+        return $this->active;
     }
 
-    public function eraseCredentials()
+    public function setActive(bool $active): self
     {
+        $this->active = $active;
+
+        return $this;
+    }
+
+    public function getRole(): ?array
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): self
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+    public function onPrePersist()
+    {
+        $this->created_at = new \DateTime("now");
     }
 }
