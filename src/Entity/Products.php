@@ -79,7 +79,7 @@ class Products
         return $this->id;
     }
 
-    public function getName(): ?array
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -91,7 +91,7 @@ class Products
         return $this;
     }
 
-    public function getDescription(): ?array
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -215,5 +215,9 @@ class Products
         }
 
         return $this;
+    }
+    public function __toString()
+    {
+        return $this->name;
     }
 }

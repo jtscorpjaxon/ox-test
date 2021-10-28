@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductVariationsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -26,8 +28,12 @@ class ProductVariations
     /**
      * @ORM\Column(type="json", nullable=true)
      */
-    private $product_attribute_value_ids = [];
+    private $product_attribute_value_ids;
+    public function __construct()
+    {
 
+        $this->product_attribute_value_ids = new ArrayCollection();
+    }
     /**
      * @ORM\Column(type="bigint")
      */
@@ -55,14 +61,18 @@ class ProductVariations
         return $this;
     }
 
-    public function getProductAttributeValueIds(): ?array
+    public function getProductAttributeValueIds()
     {
-        return $this->product_attribute_value_ids;
+        $ids=[];
+        foreach ($this->product_attribute_value_ids as $id)
+            $ids[] = $id;
+        return $ids;
     }
 
-    public function setProductAttributeValueIds(?array $product_attribute_value_ids): self
+    public function setProductAttributeValueIds( $product_attribute_value_ids): self
     {
-        $this->product_attribute_value_ids = $product_attribute_value_ids;
+        foreach ($product_attribute_value_ids as $id)
+                $this->product_attribute_value_ids[] = $id->getID();
 
         return $this;
     }

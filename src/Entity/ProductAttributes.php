@@ -36,6 +36,11 @@ class ProductAttributes
     /**
      * @var EntityManagerInterface
      */
+    /**
+     * @ORM\Column(type="bigint")
+     */
+    private $quantity;
+
 
     public function __construct()
     {
