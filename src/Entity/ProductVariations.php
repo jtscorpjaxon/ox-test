@@ -71,6 +71,7 @@ class ProductVariations
 
     public function setProductAttributeValueIds( $product_attribute_value_ids): self
     {
+        dd($product_attribute_value_ids);
         foreach ($product_attribute_value_ids as $id)
                 $this->product_attribute_value_ids[] = $id->getID();
 

@@ -11,11 +11,13 @@ namespace App\Listener;
 use App\Entity\ProductAttributes;
 use App\Entity\ProductAttributeValues;
 use App\Entity\Products;
+use App\Entity\ProductVariations;
 use Doctrine\ORM\EntityManagerInterface;
 
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityDeletedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityUpdatedEvent;
+use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityDeletedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
@@ -34,6 +36,7 @@ class EasyAdminListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
+            BeforeCrudActionEvent::class => ['ProductBeforeAction'],
             BeforeEntityPersistedEvent::class => ['ProductBeforePersist'],
             BeforeEntityUpdatedEvent::class => ['ProductBeforeUpdate'],
             BeforeEntityDeletedEvent::class => ['ProductBeforeDelete'],
@@ -47,7 +50,6 @@ class EasyAdminListener implements EventSubscriberInterface
         if (!($entity instanceof Products)) {
             return;
         }
-dd($entity);
             $entity->setMaxPrice(5);
             $entity->setMinPrice(5);
             $this->entityManager->persist($entity);
@@ -56,6 +58,14 @@ dd($entity);
 
     }
 
+    public function ProductBeforeAction(BeforeCrudActionEvent $event)
+    {
+        $entity = $event->getAdminContext();
+        if (!($entity instanceof ProductVariations)) {
+            return;
+        }
+        dd($entity);
+}
     public function ProductBeforeUpdate(BeforeEntityUpdatedEvent $event): void
     {
 
