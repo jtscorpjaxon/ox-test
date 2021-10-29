@@ -5,13 +5,29 @@
  * Date: 27.10.2021
  * Time: 14:59
  */
+
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class ApiController extends AbstractController
 {
+    private $tokenStorage;
+
+    /**
+     */
+    public function __construct(TokenStorageInterface $storage)
+    {
+        $this->tokenStorage = $storage;
+    }
 
     /**
      * @var integer HTTP status code - 200 (OK) by default
@@ -48,11 +64,23 @@ class ApiController extends AbstractController
      * @param array $data
      * @param array $headers
      *
-     * @return JsonResponse
+     * @return Response
      */
     public function response($data, $headers = [])
     {
-        return new JsonResponse($data, $this->getStatusCode(), $headers);
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $defaultContext = [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+                return $object->getName();
+            },
+        ];
+        $normalizers = [new ObjectNormalizer(null, null, null, null, null, null, $defaultContext)];
+
+        $serializer = new Serializer($normalizers, $encoders);
+        $data=$serializer->serialize($data, 'json');
+        return new Response($data ,
+            $this->getStatusCode(),
+   ['Content-type' => 'application/json']);
     }
 
     /**
@@ -153,6 +181,25 @@ class ApiController extends AbstractController
         $request->request->replace($data);
 
         return $request;
+    }
+
+    public function test()
+    {
+        if (!$this->container->has('security.token_storage')) {
+            throw new \LogicException('The Security Bundle is not registered in your application.');
+        }
+        if (null === $token = $this->container->get('security.token_storage')->getToken()) {
+            return $this->response([]);
+        }
+
+        $user = $token->getUser();
+
+        return $this->response([
+            'login'=> $user->getlogin(),
+            'email'=> $user->getEmail(),
+            'active'=> $user->getActive(),
+        ]);
+
     }
 
 

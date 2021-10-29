@@ -4,11 +4,14 @@ namespace App\Entity;
 
 use App\Repository\UsersRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UsersRepository::class)
+ * @ORM\HasLifecycleCallbacks()
+ * @method string getUserIdentifier()
  */
-class Users
+class Users implements UserInterface
 {
     /**
      * @ORM\Id
@@ -46,7 +49,19 @@ class Users
      * @ORM\Column(type="datetime")
      */
     private $created_at;
+    public function __construct($login)
+    {
+        $this->login = $login;
+    }
 
+    public static function createFromPayload($login, array $payload)
+    {
+        return new self(
+            $login,
+            $payload['roles'], // Added by default
+            $payload['email']  // Custom
+        );
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -100,7 +115,7 @@ class Users
         return $this;
     }
 
-    public function getRole(): ?array
+    public function getRole(): ?string
     {
         return $this->role;
     }
@@ -117,14 +132,36 @@ class Users
         return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeInterface $created_at): self
-    {
-        $this->created_at = $created_at;
-
-        return $this;
-    }
+    /**
+     * @ORM\PrePersist()
+     */
     public function onPrePersist()
     {
         $this->created_at = new \DateTime("now");
+    }
+
+    public function getRoles(): array
+    {
+        return ['admin','user','owner'];
+    }
+
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getUsername(): string
+    {
+        return $this->login;
+    }
+
+    public function __call($name, $arguments)
+    {
+        // TODO: Implement @method string getUserIdentifier()
     }
 }

@@ -8,6 +8,7 @@
 
 namespace App\Listener;
 
+use App\Controller\Admin\ProductCrudController;
 use App\Entity\ProductAttributes;
 use App\Entity\ProductAttributeValues;
 use App\Entity\Products;
@@ -21,16 +22,19 @@ use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityDeletedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
+use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 
 class EasyAdminListener implements EventSubscriberInterface
 {
     private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    private AdminContextProvider $adminContextProvider;
+    public function __construct(EntityManagerInterface $entityManager,AdminContextProvider $adminContextProvider)
     {
         $this->entityManager = $entityManager;
+        $this->adminContextProvider = $adminContextProvider;
+
     }
 
     public static function getSubscribedEvents()
@@ -60,11 +64,19 @@ class EasyAdminListener implements EventSubscriberInterface
 
     public function ProductBeforeAction(BeforeCrudActionEvent $event)
     {
-        $entity = $event->getAdminContext();
-        if (!($entity instanceof ProductVariations)) {
+        $crud = $event->getAdminContext()->getCrud();
+
+        if ($crud->getControllerFqcn() !== ProductCrudController::class) {
             return;
         }
-        dd($entity);
+
+        $entity = $this->adminContextProvider->getContext()->getEntity();
+        if (!$entity ) {
+            return;
+        }
+        //dump($entity->getPrimaryKeyValueAsString());
+
+
 }
     public function ProductBeforeUpdate(BeforeEntityUpdatedEvent $event): void
     {

@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Users;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -32,7 +33,9 @@ class UsersCrudController extends AbstractCrudController
                     'Read Product' => 'owner',
                     'User' => 'user',
                 ]
-                )
+                ),
+            BooleanField::new('active'),
+
 
         ];
     }

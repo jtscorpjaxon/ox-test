@@ -20,19 +20,21 @@ class AuthController extends ApiController
     {
         $em = $this->getDoctrine()->getManager();
         $request = $this->transformJsonBody($request);
-        $username = $request->get('username');
+        $login = $request->get('login');
         $password = $request->get('password');
         $email = $request->get('email');
 
-        if (empty($username) || empty($password) || empty($email)){
+        if (empty($login) || empty($password) || empty($email)){
             return $this->respondValidationError("Invalid Username or Password or Email");
         }
 
 
-        $user = new Users($username);
+        $user = new Users($login);
         $user->setPassword($encoder->encodePassword($user, $password));
         $user->setEmail($email);
-        $user->setUsername($username);
+        $user->setLogin($login);
+        $user->setActive(true);
+        $user->setRole('user');
         $em->persist($user);
         $em->flush();
         return $this->respondWithSuccess(sprintf('User %s successfully created', $user->getUsername()));
@@ -46,5 +48,6 @@ class AuthController extends ApiController
     {
         return new JsonResponse(['token' => $JWTManager->create($user)]);
     }
+
 
 }

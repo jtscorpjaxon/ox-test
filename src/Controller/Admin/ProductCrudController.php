@@ -23,6 +23,12 @@ class ProductCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        if ($pageName==="edit"){
+            $data=null;
+        }else
+        {
+
+        }
         return [
             TextField::new('name'),
             TextEditorField::new('description'),
