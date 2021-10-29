@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 
+use http\Client\Curl\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,13 +21,18 @@ use Symfony\Component\Serializer\Serializer;
 
 class ApiController extends AbstractController
 {
-    private $tokenStorage;
 
-    /**
-     */
-    public function __construct(TokenStorageInterface $storage)
+    public function getUser()
     {
-        $this->tokenStorage = $storage;
+
+        if (!$this->container->has('security.token_storage')) {
+            throw new \LogicException('The Security Bundle is not registered in your application.');
+        }
+        if (null === $token = $this->container->get('security.token_storage')->getToken()) {
+            return $this->response([]);
+        }
+
+      return  $token->getUser();
     }
 
     /**
@@ -78,9 +84,7 @@ class ApiController extends AbstractController
 
         $serializer = new Serializer($normalizers, $encoders);
         $data=$serializer->serialize($data, 'json');
-        return new Response($data ,
-            $this->getStatusCode(),
-   ['Content-type' => 'application/json']);
+        return new JsonResponse(json_decode($data, true), $this->getStatusCode(), $headers);
     }
 
     /**
@@ -185,14 +189,7 @@ class ApiController extends AbstractController
 
     public function test()
     {
-        if (!$this->container->has('security.token_storage')) {
-            throw new \LogicException('The Security Bundle is not registered in your application.');
-        }
-        if (null === $token = $this->container->get('security.token_storage')->getToken()) {
-            return $this->response([]);
-        }
-
-        $user = $token->getUser();
+        $user=$this->getUser();
 
         return $this->response([
             'login'=> $user->getlogin(),

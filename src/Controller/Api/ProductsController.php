@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Class PostController
@@ -24,12 +25,26 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ProductsController extends ApiController
 {
+    public function access()
+    {
+        if (!in_array($this->getUser()->getRole(), ["admin", "owner"])) {
+            return $this->response([
+                "code" => 401,
+                "message" => "Access Denied"
+            ]);
+        }
+return [];
+    }
+
     /**
      * @param ProductsRepository $productRepository
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/products", name="products", methods={"GET"})
      */
-    public function getProductss(ProductsRepository $productRepository){
+    public function getProductss(ProductsRepository $productRepository)
+    {
+        if(!empty($this->access()))
+            return  $this->access();
         $data = $productRepository->findAll();
         return $this->response($data);
     }
@@ -42,12 +57,14 @@ class ProductsController extends ApiController
      * @throws \Exception
      * @Route("/products", name="products_add", methods={"POST"})
      */
-    public function addProducts(Request $request, EntityManagerInterface $entityManager, ProductsRepository $productRepository){
-
-        try{
+    public function addProducts(Request $request, EntityManagerInterface $entityManager, ProductsRepository $productRepository)
+    {
+         if(!empty($this->access()))
+            return  $this->access();
+        try {
             $request = $this->transformJsonBody($request);
 
-            if (!$request || !$request->get('name') || !$request->request->get('description')){
+            if (!$request || !$request->get('name') || !$request->request->get('description')) {
                 throw new \Exception();
             }
 
@@ -57,7 +74,7 @@ class ProductsController extends ApiController
             $product->setSku($request->get('sku'));
             $product->setRating($request->get('rating'));
             $product->setQuantity($request->get('quantity'));
-            foreach ($request->get('variations') as $item){
+            foreach ($request->get('variations') as $item) {
                 $variation = new ProductVariations();
                 $variation->setQuantity($item['quantity']);
                 $variation->setPrice($item['price']);
@@ -75,7 +92,7 @@ class ProductsController extends ApiController
             ];
             return $this->response($data);
 
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             $data = [
                 'status' => 422,
                 'errors' => "Data no valid",
@@ -92,10 +109,13 @@ class ProductsController extends ApiController
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/products/{id}", name="products_get", methods={"GET"})
      */
-    public function getProducts(ProductsRepository $productRepository, $id){
+    public function getProducts(ProductsRepository $productRepository, $id)
+    {
+         if(!empty($this->access()))
+            return  $this->access();
         $product = $productRepository->find($id);
 
-        if (!$product){
+        if (!$product) {
             $data = [
                 'status' => 404,
                 'errors' => "Products not found",
@@ -113,12 +133,14 @@ class ProductsController extends ApiController
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/products/{id}", name="products_put", methods={"PUT"})
      */
-    public function updateProducts(Request $request, EntityManagerInterface $entityManager, ProductsRepository $productRepository, $id){
-
-        try{
+    public function updateProducts(Request $request, EntityManagerInterface $entityManager, ProductsRepository $productRepository, $id)
+    {
+         if(!empty($this->access()))
+            return  $this->access();
+        try {
             $product = $productRepository->find($id);
 
-            if (!$product){
+            if (!$product) {
                 $data = [
                     'status' => 404,
                     'errors' => "Products not found",
@@ -128,7 +150,7 @@ class ProductsController extends ApiController
 
             $request = $this->transformJsonBody($request);
 
-            if (!$request || !$request->get('name') || !$request->request->get('description')){
+            if (!$request || !$request->get('name') || !$request->request->get('description')) {
                 throw new \Exception();
             }
 
@@ -137,7 +159,7 @@ class ProductsController extends ApiController
             $product->setSku($request->get('sku'));
             $product->setRating($request->get('rating'));
             $product->setQuantity($request->get('quantity'));
-            foreach ($request->get('variations') as $item){
+            foreach ($request->get('variations') as $item) {
                 $variation = new ProductVariations();
                 $variation->setQuantity($item['quantity']);
                 $variation->setPrice($item['price']);
@@ -154,7 +176,7 @@ class ProductsController extends ApiController
             ];
             return $this->response($data);
 
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             $data = [
                 'status' => 422,
                 'errors' => "Data no valid",
@@ -171,10 +193,13 @@ class ProductsController extends ApiController
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/products/{id}", name="products_delete", methods={"DELETE"})
      */
-    public function deleteProducts(EntityManagerInterface $entityManager, ProductsRepository $productRepository, $id){
+    public function deleteProducts(EntityManagerInterface $entityManager, ProductsRepository $productRepository, $id)
+    {
+         if(!empty($this->access()))
+            return  $this->access();
         $product = $productRepository->find($id);
 
-        if (!$product){
+        if (!$product) {
             $data = [
                 'status' => 404,
                 'errors' => "Products not found",
